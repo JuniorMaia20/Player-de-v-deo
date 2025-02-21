@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player de Vídeo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .video-container {
+            position: fixed;
+            width: 350px;
+            height: 196px;
+            bottom: 30px;
+            right: 30px;
+            background: #000;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            cursor: grab;
+        }
+        .header {
+            width: 100%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            border-radius: 10px 10px 0 0;
+        }
+        .header-title {
+            color: white;
+            font-size: 14px;
+            margin-left: 10px;
+            font-family: 'Nunito', sans-serif;
+        }
+        .close-btn {
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        iframe {
+            width: 100%;
+            height: calc(100% - 30px);
+            border: none;
+            border-radius: 0 0 10px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container" id="videoPlayer">
+        <div class="header" id="dragArea">
+            <span class="header-title">Acompanhe ao vivo!</span>
+            <span class="close-btn" onclick="closePlayer()">&times;</span>
+        </div>
+        <iframe id="videoFrame" allowfullscreen></iframe>
+    </div>
+    
+    <script>
+        function closePlayer() {
+            document.getElementById('videoPlayer').style.display = 'none';
+        }
+        
+        function getYouTubeEmbedUrl(videoUrl) {
+            let videoId = videoUrl.split('v=')[1] || videoUrl.split("youtu.be/")[1];
+            if (videoId) {
+                let ampersandPosition = videoId.indexOf('&');
+                if (ampersandPosition !== -1) {
+                    videoId = videoId.substring(0, ampersandPosition);
+                }
+                return `https://www.youtube.com/embed/${videoId}`;
+            }
+            return '';
+        }
+        
+        function loadVideo(videoUrl) {
+            const embedUrl = getYouTubeEmbedUrl(videoUrl);
+            if (embedUrl) {
+                document.getElementById('videoFrame').src = embedUrl;
+            }
+        }
+        
+        // Vídeo atraves de link do youtube
+        loadVideo("https://www.youtube.com/watch?v=7qbLDfERC4Q");
+        
+        const player = document.getElementById("videoPlayer");
+        const dragArea = document.getElementById("dragArea");
+        let offsetX, offsetY, isDragging = false;
+        
+        dragArea.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            offsetX = e.clientX - player.getBoundingClientRect().left;
+            offsetY = e.clientY - player.getBoundingClientRect().top;
+        });
+        
+        document.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+            let x = e.clientX - offsetX;
+            let y = e.clientY - offsetY;
+            player.style.left = x + "px";
+            player.style.top = y + "px";
+            player.style.bottom = "auto";
+            player.style.right = "auto";
+        });
+        
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>
