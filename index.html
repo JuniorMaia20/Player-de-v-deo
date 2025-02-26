@@ -57,7 +57,7 @@
 <body>
     <div class="video-container" id="videoPlayer">
         <div class="header" id="dragArea">
-            <span class="header-title">Acompanhe ao vivo!</span>
+            <span class="header-title">Acompanhe ao vivo</span>
             <span class="close-btn" onclick="closePlayer()">&times;</span>
         </div>
         <iframe id="videoFrame" allowfullscreen></iframe>
@@ -87,32 +87,42 @@
             }
         }
         
-        // Vídeo atraves de link do youtube
-        loadVideo("https://www.youtube.com/watch?v=7qbLDfERC4Q");
+        // Exemplo de chamada
+        loadVideo("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
         
         const player = document.getElementById("videoPlayer");
         const dragArea = document.getElementById("dragArea");
         let offsetX, offsetY, isDragging = false;
         
-        dragArea.addEventListener("mousedown", (e) => {
+        function startDrag(e) {
             isDragging = true;
-            offsetX = e.clientX - player.getBoundingClientRect().left;
-            offsetY = e.clientY - player.getBoundingClientRect().top;
-        });
+            let event = e.type.includes('touch') ? e.touches[0] : e;
+            offsetX = event.clientX - player.getBoundingClientRect().left;
+            offsetY = event.clientY - player.getBoundingClientRect().top;
+        }
         
-        document.addEventListener("mousemove", (e) => {
+        function drag(e) {
             if (!isDragging) return;
-            let x = e.clientX - offsetX;
-            let y = e.clientY - offsetY;
+            let event = e.type.includes('touch') ? e.touches[0] : e;
+            let x = event.clientX - offsetX;
+            let y = event.clientY - offsetY;
             player.style.left = x + "px";
             player.style.top = y + "px";
             player.style.bottom = "auto";
             player.style.right = "auto";
-        });
+        }
         
-        document.addEventListener("mouseup", () => {
+        function stopDrag() {
             isDragging = false;
-        });
+        }
+        
+        dragArea.addEventListener("mousedown", startDrag);
+        document.addEventListener("mousemove", drag);
+        document.addEventListener("mouseup", stopDrag);
+        
+        dragArea.addEventListener("touchstart", startDrag);
+        document.addEventListener("touchmove", drag);
+        document.addEventListener("touchend", stopDrag);
     </script>
 </body>
 </html>
